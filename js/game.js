@@ -2,18 +2,21 @@
 Game config settings
  */
 
-let correct = 0;
-let target = 16;
-let bgImages = ['bbear.png', 'bcat.png', 'bdog.png', 'bpanda.png', 'bpinguin.png', 'bpolar.png'];
+let correct = 0;  // Number of correctly answered tiles
+let target = 16;  // Target number of correctly answered tiles to finish the game
+let bgImages = ['bbear.png', 'bcat.png', 'bdog.png', 'bpanda.png', 'bpinguin.png', 'bpolar.png']; // Background images list
 
-let startTime;
-let firstClick = false;
-let playing = true
+let startTime;  // To store the time when the game starts
+let firstClick = false;  // To check whether the first click has been made
+let playing = true;  // To check if the game is currently active
+
 /*
 Helper functions
  */
 
 // Function to create a tile
+// isColHeader and isRowHeader are flags to determine the type of the tile
+// textContent is the text to be put inside the tile
 function createTile(isColHeader = false, isRowHeader = false, textContent = "") {
     let tile = document.createElement('div');
     tile.classList.add('tile');
@@ -30,6 +33,7 @@ function createTile(isColHeader = false, isRowHeader = false, textContent = "") 
 }
 
 // Function to create an input field
+// parentTile is the tile which will contain the input field
 function createInputField(parentTile) {
     let input = document.createElement('input');
     input.type = 'text';
@@ -83,10 +87,11 @@ function createInputField(parentTile) {
 
 // Function to check if needed tiles are solved
 function checkSolved() {
-    return correct >= target
+    return correct >= target || tiles.every(tile => tile.dataset.solved === 'true');
 }
 
-// Function to show the final solution
+// Function to reveal the final solution and calculate time taken
+// tiles is an array of all the game tiles
 function resolve(tiles) {
     if (playing) {
         playing = false
@@ -119,8 +124,11 @@ function proposeTile(tiles) {
 }
 
 function setRandomBackgroundImage() {
-    let randomImage = bgImages[Math.floor(Math.random() * bgImages.length)];
-    gameGrid.style.backgroundImage = `url('/img/${randomImage}')`;
+    let date = new Date();
+    let dayOfMonth = date.getDate()
+    let imageIndex = (dayOfMonth - 1) % bgImages.length;
+    let dailyImage = bgImages[imageIndex];
+    gameGrid.style.backgroundImage = `url('/img/${dailyImage}')`;
 }
 
 /*
@@ -191,6 +199,7 @@ Start game by setting background and suggesting start tile
 setRandomBackgroundImage();
 proposeTile(tiles);
 
+// Add a click event listener to the game grid to start timing the game
 document.getElementById('game-grid').addEventListener('click', function (e) {
     if (!firstClick) {
         startTime = new Date();

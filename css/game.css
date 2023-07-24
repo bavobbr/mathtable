@@ -78,7 +78,7 @@ h1 {
 }
 
 .borderless-tile {
-    border: none;
+    /* border: none; */
 }
 
 .transparent-tile {
